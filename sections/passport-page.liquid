@@ -1,0 +1,141 @@
+{%- comment -%}
+  Passport page: explains the collecting idea next to an open "passport"
+  showing every stamp. Stops are blocks with a product handle.
+{%- endcomment -%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--page-width color-{{ section.settings.color_scheme }} passport-page"
+  style="--pp-pad-top: {{ section.settings.padding-block-start }}px; --pp-pad-bottom: {{ section.settings.padding-block-end }}px;"
+>
+  <div class="passport-page__inner">
+    <div class="passport-page__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="passport-page__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h2 class="h2 passport-page__heading">{{ section.settings.heading }}</h2>
+      <ol class="passport-page__steps">
+        {%- if section.settings.step_1 != blank -%}<li>{{ section.settings.step_1 }}</li>{%- endif -%}
+        {%- if section.settings.step_2 != blank -%}<li>{{ section.settings.step_2 }}</li>{%- endif -%}
+        {%- if section.settings.step_3 != blank -%}<li>{{ section.settings.step_3 }}</li>{%- endif -%}
+      </ol>
+      {%- if section.settings.button_label != blank -%}
+        <a class="button" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+          {{- section.settings.button_label -}}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="passport-page__book" aria-hidden="true">
+      <div class="passport-page__sheet">
+        <div class="passport-page__sheet-head">
+          <span>Janabar</span>
+          <span>Passport · Visas</span>
+        </div>
+        <div class="passport-page__grid">
+          {%- for block in section.blocks -%}
+            {%- assign slot_handle = block.settings.product_handle | strip -%}
+            <div class="passport-page__slot passport-page__slot--{{ forloop.index }}" {{ block.shopify_attributes }}>
+              {%- render 'flavor-origin', handle: slot_handle, size: 'md', index: forloop.index -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "Passport page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The Janabar Passport"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Collect every stamp"
+    },
+    {
+      "type": "text",
+      "id": "step_1",
+      "label": "Step 1",
+      "default": "Pick a destination. Each bar is a flavor from somewhere in the world."
+    },
+    {
+      "type": "text",
+      "id": "step_2",
+      "label": "Step 2",
+      "default": "Taste the trip. Every wrapper carries that place's stamp."
+    },
+    {
+      "type": "text",
+      "id": "step_3",
+      "label": "Step 3",
+      "default": "Fill your passport. Try them all and you've been everywhere."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Start your journey"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stamp",
+      "name": "Stamp",
+      "settings": [
+        {
+          "type": "text",
+          "id": "product_handle",
+          "label": "Product handle",
+          "info": "The end of the product's URL, e.g. thai-chili-lime."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Passport page"
+    }
+  ]
+}
+{% endschema %}

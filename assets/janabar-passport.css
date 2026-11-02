@@ -1,0 +1,366 @@
+/* from snippets/flavor-origin.liquid */
+  .flavor-stamp {
+    --stamp-color: #a42325;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15em;
+    padding: 0.55em 0.9em 0.5em;
+    color: var(--stamp-color);
+    border: 2px solid currentColor;
+    outline: 1px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 6px;
+    font-family: var(--font-accent--family, var(--font-heading--family));
+    font-weight: 600;
+    text-transform: uppercase;
+    line-height: 1;
+    text-align: center;
+    transform: rotate(-4deg);
+    background: color-mix(in srgb, var(--stamp-color) 6%, transparent);
+    mix-blend-mode: multiply;
+    -webkit-mask-image: radial-gradient(circle at 30% 40%, #000 60%, rgb(0 0 0 / 0.82) 61%, #000 75%);
+    mask-image: radial-gradient(circle at 30% 40%, #000 60%, rgb(0 0 0 / 0.82) 61%, #000 75%);
+    white-space: nowrap;
+  }
+
+  .flavor-stamp__top {
+    font-size: 0.55em;
+    letter-spacing: 0.18em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px dashed currentColor;
+  }
+
+  .flavor-stamp__place {
+    font-size: 1.35em;
+    letter-spacing: 0.04em;
+    padding-top: 0.15em;
+  }
+
+  .flavor-stamp__country {
+    font-size: 0.7em;
+    letter-spacing: 0.22em;
+  }
+
+  .flavor-stamp__meta {
+    display: flex;
+    gap: 0.8em;
+    font-size: 0.55em;
+    letter-spacing: 0.16em;
+    padding-top: 0.3em;
+    border-top: 1px dashed currentColor;
+  }
+
+  .flavor-stamp--sm {
+    font-size: 11px;
+  }
+
+  .flavor-stamp--md {
+    font-size: 15px;
+  }
+
+  .flavor-stamp--lg {
+    font-size: 22px;
+    border-width: 3px;
+    outline-width: 2px;
+    outline-offset: 4px;
+  }
+/* from blocks/flavor-stamp.liquid */
+  .flavor-stamp-block {
+    display: flex;
+    width: 100%;
+  }
+
+  .flavor-stamp-block--left {
+    justify-content: flex-start;
+  }
+
+  .flavor-stamp-block--center {
+    justify-content: center;
+  }
+
+  .flavor-stamp-block--right {
+    justify-content: flex-end;
+  }
+
+  .flavor-stamp-block:empty,
+  .flavor-stamp-block:not(:has(.flavor-stamp)) {
+    display: none;
+  }
+/* from sections/flavor-route.liquid */
+  .flavor-route__inner {
+    padding-block: var(--route-pad-top) var(--route-pad-bottom);
+  }
+
+  .flavor-route__header {
+    max-width: 640px;
+    margin-bottom: 48px;
+  }
+
+  .flavor-route__eyebrow {
+    font-family: var(--font-accent--family);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.8rem;
+    margin: 0 0 8px;
+    color: var(--color-primary);
+  }
+
+  .flavor-route__heading {
+    margin: 0 0 12px;
+  }
+
+  .flavor-route__text p {
+    margin: 0;
+  }
+
+  .flavor-route__stops {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 16px;
+    position: relative;
+  }
+
+  @media screen and (min-width: 990px) {
+    .flavor-route__stops {
+      grid-template-columns: repeat(var(--stop-count, 6), minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .flavor-route__stops::before {
+      content: '';
+      position: absolute;
+      top: 7px;
+      left: 4%;
+      right: 4%;
+      border-top: 2px dashed currentColor;
+      opacity: 0.35;
+    }
+  }
+
+  .flavor-route__stop {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flavor-route__link {
+    display: flex;
+    flex-direction: column;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .flavor-route__pin {
+    display: none;
+  }
+
+  @media screen and (min-width: 990px) {
+    .flavor-route__pin {
+      display: block;
+      width: 16px;
+      height: 16px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      box-shadow: 0 0 0 4px var(--color-background);
+      position: relative;
+    }
+
+    .flavor-route__stop--soon .flavor-route__pin {
+      background: var(--color-background);
+      border: 2px dashed var(--color-foreground);
+    }
+  }
+
+  .flavor-route__media {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: rgb(var(--color-foreground-rgb, 0 0 0) / 0.06);
+    display: grid;
+    place-items: center;
+  }
+
+  .flavor-route__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .flavor-route__link:hover .flavor-route__media img {
+    transform: scale(1.05);
+  }
+
+  .flavor-route__placeholder {
+    font-family: var(--font-heading--family);
+    font-size: 3rem;
+    text-transform: uppercase;
+    opacity: 0.25;
+  }
+
+  .flavor-route__stamp {
+    margin-top: -22px;
+    margin-left: 8px;
+    position: relative;
+    z-index: 1;
+    min-height: 1px;
+  }
+
+  .flavor-route__stamp .flavor-stamp {
+    background: var(--color-background);
+    mix-blend-mode: normal;
+  }
+
+  .flavor-route__name {
+    font-family: var(--font-heading--family);
+    text-transform: uppercase;
+    font-size: 1.15rem;
+    margin: 12px 0 4px;
+  }
+
+  .flavor-route__notes {
+    font-size: 0.85rem;
+    margin: 0 0 8px;
+    opacity: 0.75;
+  }
+
+  .flavor-route__status {
+    margin-top: auto;
+    font-family: var(--font-accent--family);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.8rem;
+    color: var(--color-primary);
+  }
+
+  .flavor-route__stop--soon .flavor-route__status {
+    color: inherit;
+    opacity: 0.55;
+  }
+
+  .flavor-route__stop--soon .flavor-route__media img {
+    filter: grayscale(1);
+    opacity: 0.6;
+  }
+
+  .flavor-route__stop--soon .flavor-stamp {
+    opacity: 0.55;
+  }
+/* from sections/passport-page.liquid */
+  .passport-page__inner {
+    display: grid;
+    gap: 48px;
+    align-items: center;
+    padding-block: var(--pp-pad-top) var(--pp-pad-bottom);
+  }
+
+  @media screen and (min-width: 990px) {
+    .passport-page__inner {
+      grid-template-columns: 5fr 6fr;
+      gap: 80px;
+    }
+  }
+
+  .passport-page__eyebrow {
+    font-family: var(--font-accent--family);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.8rem;
+    margin: 0 0 8px;
+  }
+
+  .passport-page__heading {
+    margin: 0 0 24px;
+  }
+
+  .passport-page__steps {
+    list-style: none;
+    counter-reset: pp-step;
+    margin: 0 0 32px;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+
+  .passport-page__steps li {
+    counter-increment: pp-step;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .passport-page__steps li::before {
+    content: '0' counter(pp-step);
+    font-family: var(--font-heading--family);
+    font-size: 1.5rem;
+    color: var(--color-primary);
+  }
+
+  .passport-page__book {
+    perspective: 1200px;
+  }
+
+  .passport-page__sheet {
+    background: #f6eee4;
+    color: #2a1c14;
+    padding: 24px;
+    border-radius: 4px;
+    box-shadow:
+      0 1px 0 rgb(0 0 0 / 0.08),
+      0 24px 48px -16px rgb(0 0 0 / 0.35);
+    background-image:
+      repeating-linear-gradient(0deg, rgb(120 90 60 / 0.05) 0 1px, transparent 1px 22px),
+      radial-gradient(circle at 80% 10%, rgb(164 35 37 / 0.06), transparent 50%);
+    transform: rotate(1.5deg);
+  }
+
+  .passport-page__sheet-head {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-accent--family);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.7rem;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgb(42 28 20 / 0.2);
+  }
+
+  .passport-page__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 16px;
+    justify-items: center;
+    align-items: center;
+    min-height: 320px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .passport-page__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .passport-page__slot:nth-child(3n + 1) .flavor-stamp {
+    transform: rotate(-8deg);
+  }
+
+  .passport-page__slot:nth-child(3n + 2) .flavor-stamp {
+    transform: rotate(5deg) translateY(10px);
+  }
+
+  .passport-page__slot:nth-child(3n) .flavor-stamp {
+    transform: rotate(-2deg) translateY(-6px);
+  }
+
+  @media screen and (max-width: 749px) {
+    .passport-page__slot .flavor-stamp {
+      font-size: 12px;
+    }
+  }

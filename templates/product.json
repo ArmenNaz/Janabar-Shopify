@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "main": {
       "type": "product-information",
@@ -198,9 +199,22 @@
                 }
               },
               "block_order": []
+            },
+            "flavor_stamp_pdp": {
+              "type": "flavor-stamp",
+              "settings": {
+                "size": "md",
+                "alignment": "left",
+                "padding-block-start": 8,
+                "padding-block-end": 8,
+                "padding-inline-start": 6,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
             }
           },
           "block_order": [
+            "flavor_stamp_pdp",
             "text_tefwj7",
             "reviews",
             "price_a7krng",

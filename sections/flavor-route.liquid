@@ -1,0 +1,150 @@
+{%- comment -%}
+  Flavor route: every Janabar destination in order, joined by a dashed
+  travel line. Each stop is a block with a product handle; if that product
+  isn't published yet, the stop shows as "Coming soon".
+{%- endcomment -%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--page-width color-{{ section.settings.color_scheme }} flavor-route"
+  style="--route-pad-top: {{ section.settings.padding-block-start }}px; --route-pad-bottom: {{ section.settings.padding-block-end }}px;"
+>
+  <div class="flavor-route__inner">
+    <header class="flavor-route__header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="flavor-route__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="flavor-route__heading h2">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="flavor-route__text">{{ section.settings.text }}</div>
+      {%- endif -%}
+    </header>
+
+    <ol class="flavor-route__stops" style="--stop-count: {{ section.blocks.size }};">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign stop_handle = block.settings.product_handle | strip
+          assign stop_product = all_products[stop_handle]
+          assign is_live = false
+          if stop_product != blank and stop_product.id != blank
+            assign is_live = true
+          endif
+        -%}
+        <li class="flavor-route__stop{% unless is_live %} flavor-route__stop--soon{% endunless %}" {{ block.shopify_attributes }}>
+          <span class="flavor-route__pin" aria-hidden="true"></span>
+          {%- if is_live -%}<a class="flavor-route__link" href="{{ stop_product.url }}">{%- endif -%}
+          <div class="flavor-route__media">
+            {%- if is_live and stop_product.featured_media -%}
+              {{
+                stop_product.featured_media
+                | image_url: width: 400
+                | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 15vw, 40vw', alt: stop_product.title
+              }}
+            {%- else -%}
+              <span class="flavor-route__placeholder">{{ block.settings.title | default: stop_handle | slice: 0 }}</span>
+            {%- endif -%}
+          </div>
+          <div class="flavor-route__stamp">
+            {%- render 'flavor-origin', product: stop_product, handle: stop_handle, size: 'sm', index: forloop.index -%}
+          </div>
+          <h3 class="flavor-route__name">
+            {%- if is_live -%}{{ stop_product.title }}{%- else -%}{{ block.settings.title }}{%- endif -%}
+          </h3>
+          {%- if block.settings.notes != blank -%}
+            <p class="flavor-route__notes">{{ block.settings.notes }}</p>
+          {%- endif -%}
+          <span class="flavor-route__status">
+            {%- if is_live -%}Taste it →{%- else -%}Coming soon{%- endif -%}
+          </span>
+          {%- if is_live -%}</a>{%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "Flavor route",
+  "class": "flavor-route-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The route"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Six stops. One bar at a time."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Every Janabar is a destination. Follow the route and collect a stamp at each stop.</p>"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stop",
+      "name": "Stop",
+      "settings": [
+        {
+          "type": "text",
+          "id": "product_handle",
+          "label": "Product handle",
+          "info": "The end of the product's URL, e.g. thai-chili-lime. Unpublished products show as Coming soon."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name (used while Coming soon)"
+        },
+        {
+          "type": "text",
+          "id": "notes",
+          "label": "Flavor notes",
+          "info": "A short line, e.g. Chili · Lime"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flavor route"
+    }
+  ]
+}
+{% endschema %}
