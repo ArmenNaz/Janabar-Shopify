@@ -554,7 +554,7 @@
         "text_dest_5": {
           "type": "text",
           "settings": {
-            "text": "<p>Mediterranean</p>",
+            "text": "<p>Beirut</p>",
             "type_preset": "custom",
             "font": "var(--font-heading--family)",
             "font_size": "var(--font-size--h3)",
