@@ -1,0 +1,93 @@
+{%- comment -%}
+  Destination data for each Janabar bar, keyed by product handle.
+  Outputs one pipe-separated line:
+    place|country|code|color|latitude|longitude|flavor notes
+
+  Capture it and split:
+    capture data
+      render 'flavor-data', handle: product.handle
+    endcapture
+    assign data = data | strip | split: '|'
+
+  Product metafields override these values without code changes:
+    custom.origin_place, custom.origin_country, custom.origin_code,
+    custom.stamp_color (color), custom.flavor_notes (text)
+{%- endcomment -%}
+{%- liquid
+  assign place = ''
+  assign country = ''
+  assign code = ''
+  assign color = '#a42325'
+  assign lat = ''
+  assign lon = ''
+  assign notes = ''
+
+  case handle
+    when 'thai-chili-lime'
+      assign place = 'Bangkok'
+      assign country = 'Thailand'
+      assign code = 'BKK'
+      assign color = '#4f7a28'
+      assign lat = '13.75'
+      assign lon = '100.5'
+      assign notes = 'Chili · Lime'
+    when 'assam-chai-spice'
+      assign place = 'Assam'
+      assign country = 'India'
+      assign code = 'ASM'
+      assign color = '#8a5a2b'
+      assign lat = '26.2'
+      assign lon = '92.9'
+      assign notes = 'Black tea · Chai spice'
+    when 'armenian-pumpkin'
+      assign place = 'Yerevan'
+      assign country = 'Armenia'
+      assign code = 'EVN'
+      assign color = '#c2611f'
+      assign lat = '40.18'
+      assign lon = '44.51'
+      assign notes = 'Pumpkin · Warm spice'
+    when 'mediterranean-spice'
+      assign place = 'Beirut'
+      assign country = 'Lebanon'
+      assign code = 'BEY'
+      assign color = '#2f6f8f'
+      assign lat = '33.89'
+      assign lon = '35.5'
+      assign notes = 'Sesame · Herbs'
+    when 'pueblo-mole'
+      assign place = 'Puebla'
+      assign country = 'Mexico'
+      assign code = 'PBC'
+      assign color = '#7a2e1f'
+      assign lat = '19.04'
+      assign lon = '-98.2'
+      assign notes = 'Chili · Cacao'
+    when 'valencia-chocolate-orange'
+      assign place = 'Valencia'
+      assign country = 'Spain'
+      assign code = 'VLC'
+      assign color = '#d9771e'
+      assign lat = '39.47'
+      assign lon = '-0.38'
+      assign notes = 'Chocolate · Orange'
+  endcase
+
+  if product.metafields.custom.origin_place != blank
+    assign place = product.metafields.custom.origin_place.value
+  endif
+  if product.metafields.custom.origin_country != blank
+    assign country = product.metafields.custom.origin_country.value
+  endif
+  if product.metafields.custom.origin_code != blank
+    assign code = product.metafields.custom.origin_code.value
+  endif
+  if product.metafields.custom.stamp_color != blank
+    assign color = product.metafields.custom.stamp_color.value
+  endif
+  if product.metafields.custom.flavor_notes != blank
+    assign notes = product.metafields.custom.flavor_notes.value
+  endif
+
+  echo place | append: '|' | append: country | append: '|' | append: code | append: '|' | append: color | append: '|' | append: lat | append: '|' | append: lon | append: '|' | append: notes
+-%}

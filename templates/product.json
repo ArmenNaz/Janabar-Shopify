@@ -503,10 +503,24 @@
         "padding-block-start": 1,
         "padding-block-end": 1
       }
+    },
+    "flavor_journey": {
+      "type": "flavor-journey",
+      "settings": {
+        "heading": "A taste of [place]",
+        "text": "<p>Every Janabar starts with a place. This one carries the flavors of [place], [country], wrapped up for wherever your day takes you.</p>",
+        "notes_label": "Flavor notes",
+        "next_label": "Next stop",
+        "route": "pueblo-mole,valencia-chocolate-orange,mediterranean-spice,armenian-pumpkin,assam-chai-spice,thai-chili-lime",
+        "color_scheme": "scheme-3",
+        "padding-block-start": 72,
+        "padding-block-end": 72
+      }
     }
   },
   "order": [
     "main",
+    "flavor_journey",
     "product_recommendations_iA6pyd"
   ]
 }

@@ -7,10 +7,8 @@
   - size: {string} 'sm' | 'md' | 'lg' (default 'md')
   - index: {number} stamp number shown on the stamp (optional)
 
-  Destination data lives below, keyed by product handle. To override it
-  without editing code, add product metafields:
-    custom.origin_place, custom.origin_country, custom.origin_code,
-    custom.stamp_color (color)
+  Destination data lives in snippets/flavor-data.liquid (with metafield
+  overrides documented there).
 
   Usage:
   {% render 'flavor-origin', product: product, size: 'sm' %}
@@ -18,57 +16,14 @@
 
 {%- liquid
   assign stamp_handle = handle | default: product.handle
-  assign place = ''
-  assign country = ''
-  assign code = ''
-  assign color = '#a42325'
-
-  case stamp_handle
-    when 'thai-chili-lime'
-      assign place = 'Bangkok'
-      assign country = 'Thailand'
-      assign code = 'BKK'
-      assign color = '#4f7a28'
-    when 'assam-chai-spice'
-      assign place = 'Assam'
-      assign country = 'India'
-      assign code = 'ASM'
-      assign color = '#8a5a2b'
-    when 'armenian-pumpkin'
-      assign place = 'Yerevan'
-      assign country = 'Armenia'
-      assign code = 'EVN'
-      assign color = '#c2611f'
-    when 'mediterranean-spice'
-      assign place = 'Beirut'
-      assign country = 'Lebanon'
-      assign code = 'BEY'
-      assign color = '#2f6f8f'
-    when 'pueblo-mole'
-      assign place = 'Puebla'
-      assign country = 'Mexico'
-      assign code = 'PBC'
-      assign color = '#7a2e1f'
-    when 'valencia-chocolate-orange'
-      assign place = 'Valencia'
-      assign country = 'Spain'
-      assign code = 'VLC'
-      assign color = '#d9771e'
-  endcase
-
-  if product.metafields.custom.origin_place != blank
-    assign place = product.metafields.custom.origin_place.value
-  endif
-  if product.metafields.custom.origin_country != blank
-    assign country = product.metafields.custom.origin_country.value
-  endif
-  if product.metafields.custom.origin_code != blank
-    assign code = product.metafields.custom.origin_code.value
-  endif
-  if product.metafields.custom.stamp_color != blank
-    assign color = product.metafields.custom.stamp_color.value
-  endif
-
+  capture stamp_data
+    render 'flavor-data', handle: stamp_handle, product: product
+  endcapture
+  assign stamp_data = stamp_data | strip | split: '|'
+  assign place = stamp_data[0]
+  assign country = stamp_data[1]
+  assign code = stamp_data[2]
+  assign color = stamp_data[3] | default: '#a42325'
   assign stamp_size = size | default: 'md'
 -%}
 
@@ -89,4 +44,3 @@
     </span>
   </span>
 {%- endif -%}
-

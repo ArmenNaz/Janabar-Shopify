@@ -1,0 +1,273 @@
+{%- comment -%}
+  Flavor journey (product page): a dotted world map with every Janabar
+  destination on one travel line, this bar's stop highlighted, the story
+  and flavor notes beside it, and a link on to the next stop.
+  Destination data: snippets/flavor-data.liquid.
+{%- endcomment -%}
+
+{%- liquid
+  capture current_data
+    render 'flavor-data', handle: product.handle, product: product
+  endcapture
+  assign current_data = current_data | strip | split: '|'
+  assign place = current_data[0]
+  assign country = current_data[1]
+  assign code = current_data[2]
+  assign color = current_data[3] | default: '#a42325'
+  assign lat = current_data[4]
+  assign lon = current_data[5]
+  assign notes = current_data[6]
+
+  assign route = section.settings.route | remove: ' ' | split: ','
+  assign current_index = -1
+  for h in route
+    if h == product.handle
+      assign current_index = forloop.index0
+    endif
+  endfor
+
+  assign next_product = blank
+  if current_index >= 0 and route.size > 1
+    for step in (1..route.size)
+      assign j = current_index | plus: step | modulo: route.size
+      assign candidate = all_products[route[j]]
+      if candidate.id != blank and candidate.id != product.id
+        assign next_product = candidate
+        break
+      endif
+    endfor
+  endif
+-%}
+
+{%- if place != blank and lat != blank -%}
+  {%- liquid
+    assign cur_x = lon | plus: 180.0
+    assign cur_y = 80.0 | minus: lat
+    assign pin_left = cur_x | minus: 50.0 | divided_by: 280.0 | times: 100 | round: 2
+    assign pin_top = cur_y | divided_by: 125.0 | times: 100 | round: 2
+
+    assign lat_abs = lat | abs | round: 2
+    assign lon_abs = lon | abs | round: 2
+    assign lat_dir = 'N'
+    assign lat_num = lat | plus: 0
+    if lat_num < 0
+      assign lat_dir = 'S'
+    endif
+    assign lon_dir = 'E'
+    assign lon_num = lon | plus: 0
+    if lon_num < 0
+      assign lon_dir = 'W'
+    endif
+
+    assign heading = section.settings.heading | replace: '[place]', place | replace: '[country]', country
+    assign text = section.settings.text | replace: '[place]', place | replace: '[country]', country
+  -%}
+
+  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+  <div
+    class="section section--page-width color-{{ section.settings.color_scheme }} flavor-journey"
+    style="--fj-pad-top: {{ section.settings.padding-block-start }}px; --fj-pad-bottom: {{ section.settings.padding-block-end }}px; --fj-accent: {{ color }};"
+  >
+    <div class="flavor-journey__inner">
+      <figure class="flavor-journey__map">
+        <div class="flavor-journey__canvas">
+        <svg
+          class="flavor-journey__svg"
+          viewBox="50 0 280 125"
+          preserveAspectRatio="xMidYMid meet"
+          role="img"
+          aria-label="World map showing {{ place }}, {{ country }} among the Janabar destinations"
+        >
+          {%- render 'world-dots' -%}
+
+          {%- liquid
+            assign path_d = ''
+            assign prev_x = ''
+            assign prev_y = ''
+            capture route_pins
+              for h in route
+                assign stop_product = all_products[h]
+                capture stop_data
+                  render 'flavor-data', handle: h, product: stop_product
+                endcapture
+                assign stop_data = stop_data | strip | split: '|'
+                if stop_data[4] == blank
+                  continue
+                endif
+                assign sx = stop_data[5] | plus: 180.0 | round: 2
+                assign sy = 80.0 | minus: stop_data[4] | round: 2
+
+                if prev_x == ''
+                  assign path_d = 'M' | append: sx | append: ' ' | append: sy
+                else
+                  assign mx = prev_x | plus: sx | divided_by: 2.0 | round: 2
+                  assign lift = sx | minus: prev_x | abs | times: 0.22 | plus: 4
+                  assign my = prev_y | plus: sy | divided_by: 2.0 | minus: lift | round: 2
+                  assign path_d = path_d | append: ' Q' | append: mx | append: ' ' | append: my | append: ' ' | append: sx | append: ' ' | append: sy
+                endif
+                assign prev_x = sx
+                assign prev_y = sy
+
+                if h == product.handle
+                  continue
+                endif
+                if stop_product.id != blank
+                  echo '<a href="' | append: stop_product.url | append: '"><title>' | append: stop_data[0] | append: ', ' | append: stop_data[1] | append: '</title>'
+                  echo '<circle class="flavor-journey__stop" cx="' | append: sx | append: '" cy="' | append: sy | append: '" r="1.6"/></a>'
+                else
+                  echo '<circle class="flavor-journey__stop flavor-journey__stop--soon" cx="' | append: sx | append: '" cy="' | append: sy | append: '" r="1.4"/>'
+                endif
+              endfor
+            endcapture
+          -%}
+
+          {%- if path_d != '' -%}
+            <path class="flavor-journey__route" d="{{ path_d }}"/>
+          {%- endif -%}
+          {{ route_pins }}
+          <circle class="flavor-journey__pulse" cx="{{ cur_x }}" cy="{{ cur_y }}" r="2.4"/>
+          <circle class="flavor-journey__here" cx="{{ cur_x }}" cy="{{ cur_y }}" r="2.2"/>
+        </svg>
+
+        <span class="flavor-journey__label" style="left: {{ pin_left }}%; top: {{ pin_top }}%;">
+          {{ place }}
+        </span>
+        </div>
+
+        <figcaption class="flavor-journey__coords">
+          {{ lat_abs }}°{{ lat_dir }} &nbsp; {{ lon_abs }}°{{ lon_dir }} &nbsp;·&nbsp; {{ code }}
+        </figcaption>
+      </figure>
+
+      <div class="flavor-journey__copy">
+        <div class="flavor-journey__stamp">
+          {%- render 'flavor-origin', product: product, size: 'lg' -%}
+        </div>
+
+        {%- if heading != blank -%}
+          <h2 class="h2 flavor-journey__heading">{{ heading }}</h2>
+        {%- endif -%}
+
+        {%- if text != blank -%}
+          <div class="flavor-journey__text rte">{{ text }}</div>
+        {%- endif -%}
+
+        {%- if notes != blank and section.settings.notes_label != blank -%}
+          <div class="flavor-journey__notes">
+            <p class="flavor-journey__notes-label">{{ section.settings.notes_label }}</p>
+            <ul class="flavor-journey__chips">
+              {%- assign note_list = notes | split: '·' -%}
+              {%- for note in note_list -%}
+                <li>{{ note | strip }}</li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        {%- if next_product != blank and section.settings.next_label != blank -%}
+          {%- liquid
+            capture next_data
+              render 'flavor-data', handle: next_product.handle, product: next_product
+            endcapture
+            assign next_data = next_data | strip | split: '|'
+          -%}
+          <a class="flavor-journey__next" href="{{ next_product.url }}" style="--next-accent: {{ next_data[3] | default: '#a42325' }};">
+            {%- if next_product.featured_media -%}
+              <span class="flavor-journey__next-media">
+                {{
+                  next_product.featured_media
+                  | image_url: width: 240
+                  | image_tag: loading: 'lazy', sizes: '96px', alt: ''
+                }}
+              </span>
+            {%- endif -%}
+            <span class="flavor-journey__next-body">
+              <span class="flavor-journey__next-label">{{ section.settings.next_label }}</span>
+              <span class="flavor-journey__next-place">
+                {{- next_data[0] -}}
+                {%- if next_data[1] != blank %}, {{ next_data[1] }}{% endif -%}
+              </span>
+              <span class="flavor-journey__next-title">{{ next_product.title }}</span>
+            </span>
+            <span class="flavor-journey__next-arrow" aria-hidden="true">→</span>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Flavor journey map",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "[place] and [country] are replaced with this bar's destination.",
+      "default": "A taste of [place]"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "info": "[place] and [country] are replaced with this bar's destination.",
+      "default": "<p>Every Janabar starts with a place. This one carries the flavors of [place], [country], wrapped up for wherever your day takes you.</p>"
+    },
+    {
+      "type": "text",
+      "id": "notes_label",
+      "label": "Flavor notes label",
+      "default": "Flavor notes"
+    },
+    {
+      "type": "text",
+      "id": "next_label",
+      "label": "Next stop label",
+      "default": "Next stop"
+    },
+    {
+      "type": "text",
+      "id": "route",
+      "label": "Route",
+      "info": "Product handles, comma-separated, in the order the travel line connects them.",
+      "default": "pueblo-mole,valencia-chocolate-orange,mediterranean-spice,armenian-pumpkin,assam-chai-spice,thai-chili-lime"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flavor journey map"
+    }
+  ]
+}
+{% endschema %}
