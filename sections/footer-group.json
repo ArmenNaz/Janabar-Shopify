@@ -219,9 +219,19 @@
         "padding-block-start": 20,
         "padding-block-end": 20
       }
+    },
+    "ingredient_garnish": {
+      "type": "ingredient-garnish",
+      "settings": {
+        "ingredients": "chili,cinnamon-sticks,coconut-half,cardamom,pomegranate,lime,ginger,honeycomb,cloves,pumpkin,tea-leaf,almonds",
+        "size": 96,
+        "band_height": 44,
+        "color_scheme": "scheme-2"
+      }
     }
   },
   "order": [
+    "ingredient_garnish",
     "footer_WnX4aJ",
     "utilities"
   ]

@@ -11,6 +11,21 @@
   {{ block.shopify_attributes }}
 >
   {% render 'flavor-origin', product: product_resource, size: block.settings.size %}
+  {%- if block.settings.ingredient_count > 0 -%}
+    {%- liquid
+      capture stamp_ing
+        render 'ingredient-list', handle: product_resource.handle, product: product_resource
+      endcapture
+      assign stamp_ing = stamp_ing | strip | split: ','
+    -%}
+    {%- if stamp_ing.size > 0 -%}
+      <span class="flavor-stamp-block__ingredients flavor-stamp-block__ingredients--{{ block.settings.size }}">
+        {%- for key in stamp_ing limit: block.settings.ingredient_count -%}
+          {%- render 'ingredient-img', key: key, img_class: 'flavor-stamp-block__ingredient' -%}
+        {%- endfor -%}
+      </span>
+    {%- endif -%}
+  {%- endif -%}
 </div>
 
 
@@ -33,6 +48,16 @@
         { "value": "lg", "label": "Large" }
       ],
       "default": "md"
+    },
+    {
+      "type": "range",
+      "id": "ingredient_count",
+      "label": "Ingredient illustrations",
+      "info": "How many ingredient drawings to show beside the stamp (0 to hide).",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "default": 3
     },
     {
       "type": "select",

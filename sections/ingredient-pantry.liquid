@@ -1,0 +1,158 @@
+{%- comment -%}
+  Ingredient pantry: every ingredient illustration across the chosen flavors,
+  set out on shelves. Flavor tabs (CSS only) dim the ingredients that aren't in
+  the selected bar. Ingredient lists: snippets/ingredient-list.liquid.
+{%- endcomment -%}
+
+{%- liquid
+  assign pid = 'Pantry-' | append: section.id
+  assign flavor_handles = section.settings.flavors | remove: ' ' | split: ','
+
+  # Collect unique ingredients (by display name) and which flavors use them.
+  assign item_keys = ''
+  assign item_labels = '|'
+  assign item_flavors = ''
+  for h in flavor_handles
+    assign fi = forloop.index
+    capture keys
+      render 'ingredient-list', handle: h, product: all_products[h]
+    endcapture
+    assign keys = keys | strip | split: ','
+    for key in keys
+      capture lbl
+        render 'ingredient-img', key: key, label_only: true
+      endcapture
+      assign lbl = lbl | strip
+      assign needle = '|' | append: lbl | append: '|'
+      if item_labels contains needle
+        # Already on the shelf: tag it with this flavor too.
+        assign idx = -1
+        assign all_labels = item_labels | split: '|'
+        for l in all_labels
+          if l == lbl
+            # item_labels starts with '|', so split() yields a leading empty entry.
+            assign idx = forloop.index0 | minus: 1
+          endif
+        endfor
+        assign flavors_list = item_flavors | split: ';'
+        assign updated = ''
+        for f in flavors_list
+          assign f_out = f
+          if forloop.index0 == idx
+            assign f_out = f | append: ' f-' | append: fi
+          endif
+          assign updated = updated | append: f_out | append: ';'
+        endfor
+        assign item_flavors = updated
+      else
+        assign item_keys = item_keys | append: key | append: ','
+        assign item_labels = item_labels | append: lbl | append: '|'
+        assign item_flavors = item_flavors | append: 'f-' | append: fi | append: ';'
+      endif
+    endfor
+  endfor
+  assign item_keys = item_keys | split: ','
+  assign item_flavors = item_flavors | split: ';'
+-%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  id="{{ pid }}"
+  class="section section--page-width color-{{ section.settings.color_scheme }} pantry"
+  style="--pantry-pad-top: {{ section.settings.padding-block-start }}px; --pantry-pad-bottom: {{ section.settings.padding-block-end }}px;"
+>
+  <style>
+    {%- for h in flavor_handles -%}
+      #{{ pid }}:has(#{{ pid }}-tab-{{ forloop.index }}:checked) .pantry__item:not(.f-{{ forloop.index }}) :is(.pantry__img, .pantry__label) {
+        opacity: 0.18;
+        filter: grayscale(1);
+      }
+      #{{ pid }}:has(#{{ pid }}-tab-{{ forloop.index }}:checked) .pantry__item:not(.f-{{ forloop.index }}) .pantry__img {
+        transform: scale(0.88) rotate(var(--tilt));
+      }
+      #{{ pid }}:has(#{{ pid }}-tab-{{ forloop.index }}:checked) .pantry__item.f-{{ forloop.index }} .pantry__img {
+        transform: translateY(-8px) rotate(var(--tilt));
+      }
+      #{{ pid }}:has(#{{ pid }}-tab-{{ forloop.index }}:checked) .pantry__shop--{{ forloop.index }} {
+        display: inline-flex;
+      }
+    {%- endfor -%}
+  </style>
+
+  <div class="pantry__inner">
+    <div class="pantry__header">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="h2 pantry__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="pantry__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+    </div>
+
+    <div class="pantry__tabs" role="radiogroup" aria-label="{{ section.settings.tabs_label | escape }}">
+      <input type="radio" class="pantry__radio" name="{{ pid }}-tab" id="{{ pid }}-tab-0" checked>
+      <label class="pantry__tab" for="{{ pid }}-tab-0">{{ section.settings.all_label }}</label>
+      {%- for h in flavor_handles -%}
+        {%- liquid
+          assign fp = all_products[h]
+          capture fd
+            render 'flavor-data', handle: h, product: fp
+          endcapture
+          assign fd = fd | strip | split: '|'
+          assign ftitle = fp.title | default: h | replace: '-', ' ' | capitalize
+        -%}
+        <input type="radio" class="pantry__radio" name="{{ pid }}-tab" id="{{ pid }}-tab-{{ forloop.index }}">
+        <label class="pantry__tab" for="{{ pid }}-tab-{{ forloop.index }}" style="--flavor-color: {{ fd[3] | default: '#a42325' }};">
+          <span class="pantry__dot" aria-hidden="true"></span>{{ ftitle }}
+        </label>
+      {%- endfor -%}
+    </div>
+
+    <ul class="pantry__shelf">
+      {%- for key in item_keys -%}
+        {%- assign i = forloop.index0 -%}
+        <li class="pantry__item {{ item_flavors[i] }}" style="--tilt: {% cycle '-6deg', '4deg', '-2deg', '7deg', '-4deg' %};">
+          <span class="pantry__img">
+            {%- render 'ingredient-img', key: key -%}
+          </span>
+          <span class="pantry__label">
+            {%- render 'ingredient-img', key: key, label_only: true -%}
+          </span>
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    <div class="pantry__footer">
+      {%- for h in flavor_handles -%}
+        {%- assign fp = all_products[h] -%}
+        {%- if fp.id != blank -%}
+          <a class="button pantry__shop pantry__shop--{{ forloop.index }}" href="{{ fp.url }}">
+            {{- section.settings.shop_label | replace: '[flavor]', fp.title -}}
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if section.settings.note != blank -%}
+        <p class="pantry__note">{{ section.settings.note }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Ingredient pantry",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The pantry" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Every flavor starts with a handful of ingredients from its destination. Pick a bar to see what inspired it.</p>" },
+    { "type": "text", "id": "flavors", "label": "Flavors", "info": "Product handles, comma-separated. Ingredient art per flavor is set in snippets/ingredient-list.liquid or a custom.ingredient_art product metafield.", "default": "thai-chili-lime,assam-chai-spice,armenian-pumpkin" },
+    { "type": "text", "id": "tabs_label", "label": "Tabs label (screen readers)", "default": "Show ingredients for" },
+    { "type": "text", "id": "all_label", "label": "All tab label", "default": "All flavors" },
+    { "type": "text", "id": "shop_label", "label": "Shop button", "info": "[flavor] = product name.", "default": "Shop [flavor]" },
+    { "type": "text", "id": "note", "label": "Small print", "default": "Illustrations show the flavors that inspire each bar. See each product for full ingredients and allergens." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-3" },
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 80 }
+  ],
+  "presets": [{ "name": "Ingredient pantry" }]
+}
+{% endschema %}

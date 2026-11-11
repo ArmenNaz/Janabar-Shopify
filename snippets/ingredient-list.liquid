@@ -1,0 +1,31 @@
+{%- comment -%}
+  Outputs a comma-separated list of ingredient illustration keys for a flavor,
+  most characteristic first (the first few are used on product cards).
+  Keys match assets/ingredient-<key>.webp; see snippets/ingredient-img.liquid.
+
+  Accepts:
+  - handle: {string} product handle or handleized variant title
+  - product: {product} optional; a custom.ingredient_art metafield
+    (single line text, comma-separated keys) overrides the list below.
+
+  Usage:
+    capture keys
+      render 'ingredient-list', handle: product.handle, product: product
+    endcapture
+    assign keys = keys | strip | split: ','
+{%- endcomment -%}
+{%- liquid
+  assign ing_keys = ''
+  case handle
+    when 'thai-chili-lime'
+      assign ing_keys = 'chili,lime,coconut,ginger,cilantro,peanuts'
+    when 'assam-chai-spice', 'coconut-chai'
+      assign ing_keys = 'chai,coconut-half,cardamom,ginger,cloves,honey-jar,almonds'
+    when 'armenian-pumpkin', 'armenian-harvest'
+      assign ing_keys = 'pomegranate,pumpkin,honey,cinnamon-bundle,honeycomb'
+  endcase
+  if product.metafields.custom.ingredient_art != blank
+    assign ing_keys = product.metafields.custom.ingredient_art.value | remove: ' '
+  endif
+  echo ing_keys
+-%}

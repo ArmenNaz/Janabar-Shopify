@@ -1,0 +1,47 @@
+{%- comment -%}
+  Ingredient garnish: a row of ingredient illustrations that sit on the top
+  edge of the footer, peeking over the section above. Lives in the footer
+  group, so it appears on every page.
+{%- endcomment -%}
+
+{%- assign garnish_keys = section.settings.ingredients | remove: ' ' | split: ',' -%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--full-width color-{{ section.settings.color_scheme }} garnish"
+  style="--garnish-band: {{ section.settings.band_height }}px; --garnish-size: {{ section.settings.size }}px;"
+  aria-hidden="true"
+>
+  <div class="garnish__row">
+    {%- for key in garnish_keys -%}
+      <span
+        class="garnish__item"
+        style="--rot: {% cycle '-14deg', '9deg', '-5deg', '16deg', '-10deg', '6deg', '-18deg' %}; --scale: {% cycle '1', '0.78', '0.92', '0.7', '1.05', '0.84' %}; --delay: {{ forloop.index0 | times: -0.7 }}s;"
+      >
+        {%- render 'ingredient-img', key: key, decorative: true -%}
+      </span>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Ingredient garnish",
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "ingredients",
+      "label": "Ingredients",
+      "info": "Comma-separated: chili, lime, cilantro, coconut, coconut-half, ginger, peanuts, chai, tea-leaf, cardamom, cloves, honey, honey-jar, honeycomb, almonds, pomegranate, pumpkin, cinnamon-bundle, cinnamon-sticks.",
+      "default": "chili,cinnamon-sticks,coconut-half,cardamom,pomegranate,lime,ginger,honeycomb,cloves,pumpkin,tea-leaf,almonds"
+    },
+    { "type": "range", "id": "size", "label": "Illustration size", "min": 50, "max": 160, "step": 5, "unit": "px", "default": 96 },
+    { "type": "range", "id": "band_height", "label": "Band height", "min": 20, "max": 100, "step": 4, "unit": "px", "default": 44 },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "info": "Match your footer.", "default": "scheme-2" }
+  ],
+  "presets": [{ "name": "Ingredient garnish" }]
+}
+{% endschema %}

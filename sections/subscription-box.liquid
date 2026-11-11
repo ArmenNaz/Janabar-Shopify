@@ -63,6 +63,11 @@
             | image_tag: loading: 'eager', sizes: '(min-width: 990px) 50vw, 100vw', class: 'sub-box__image'
           }}
         {%- else -%}
+          <div class="sub-box__orbit" data-box-orbit aria-hidden="true">
+            {%- for i in (1..4) -%}
+              <img class="sub-box__orbit-item sub-box__orbit-item--{{ i }}" alt="" hidden>
+            {%- endfor -%}
+          </div>
           <img class="sub-box__photo" data-box-photo alt="" hidden width="1294" height="1216">
           <div class="sub-box__box" aria-hidden="true" data-box-visual>
             <div class="sub-box__lid">
@@ -145,7 +150,18 @@
                     "code": {{ vdata[2] | json }},
                     "color": {{ vdata[3] | default: '#a42325' | json }},
                     "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1400 | json }}{% else %}null{% endif %},
-                    "imageAlt": {{ v.featured_media.alt | default: v.title | json }}
+                    "imageAlt": {{ v.featured_media.alt | default: v.title | json }},
+                    "ingredients": [
+                      {%- liquid
+                        capture vkeys
+                          render 'ingredient-list', handle: vh, product: all_products[vh]
+                        endcapture
+                        assign vkeys = vkeys | strip | split: ','
+                      -%}
+                      {%- for key in vkeys limit: 4 -%}
+                        {{ 'ingredient-' | append: key | append: '.webp' | asset_url | json }}{% unless forloop.last %},{% endunless %}
+                      {%- endfor -%}
+                    ]
                   }
                   {%- assign first_written = true -%}
                 {%- endfor -%}

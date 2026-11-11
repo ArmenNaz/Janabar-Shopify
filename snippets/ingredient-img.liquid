@@ -1,0 +1,119 @@
+{%- comment -%}
+  Renders one ingredient illustration from assets/ingredient-<key>.webp.
+
+  Accepts:
+  - key: {string} e.g. 'chili', 'coconut-half'
+  - img_class: {string} extra classes (optional)
+  - decorative: {boolean} empty alt text when true (default false)
+  - eager: {boolean} load eagerly (default lazy)
+  - label_only: {boolean} output just the ingredient name, no image
+  - with_label: {boolean} print the ingredient name under the image (alt becomes empty)
+{%- endcomment -%}
+{%- liquid
+  assign ing_label = ''
+  assign ing_w = 640
+  assign ing_h = 480
+  case key
+    when 'almonds'
+      assign ing_label = 'Almonds'
+      assign ing_w = 472
+      assign ing_h = 306
+    when 'cardamom'
+      assign ing_label = 'Cardamom'
+      assign ing_w = 640
+      assign ing_h = 344
+    when 'chai'
+      assign ing_label = 'Chai'
+      assign ing_w = 640
+      assign ing_h = 496
+    when 'chili'
+      assign ing_label = 'Chili'
+      assign ing_w = 640
+      assign ing_h = 432
+    when 'cilantro'
+      assign ing_label = 'Cilantro'
+      assign ing_w = 614
+      assign ing_h = 640
+    when 'cinnamon-bundle'
+      assign ing_label = 'Cinnamon'
+      assign ing_w = 640
+      assign ing_h = 283
+    when 'cinnamon-sticks'
+      assign ing_label = 'Cinnamon'
+      assign ing_w = 640
+      assign ing_h = 368
+    when 'cloves'
+      assign ing_label = 'Cloves'
+      assign ing_w = 640
+      assign ing_h = 414
+    when 'coconut-half'
+      assign ing_label = 'Coconut'
+      assign ing_w = 640
+      assign ing_h = 567
+    when 'coconut'
+      assign ing_label = 'Coconut'
+      assign ing_w = 640
+      assign ing_h = 560
+    when 'ginger'
+      assign ing_label = 'Ginger'
+      assign ing_w = 640
+      assign ing_h = 410
+    when 'honey-jar'
+      assign ing_label = 'Honey'
+      assign ing_w = 579
+      assign ing_h = 640
+    when 'honey'
+      assign ing_label = 'Honey'
+      assign ing_w = 640
+      assign ing_h = 436
+    when 'honeycomb'
+      assign ing_label = 'Honeycomb'
+      assign ing_w = 640
+      assign ing_h = 542
+    when 'lime'
+      assign ing_label = 'Lime'
+      assign ing_w = 640
+      assign ing_h = 517
+    when 'peanuts'
+      assign ing_label = 'Peanuts'
+      assign ing_w = 640
+      assign ing_h = 419
+    when 'pomegranate'
+      assign ing_label = 'Pomegranate'
+      assign ing_w = 640
+      assign ing_h = 492
+    when 'pumpkin'
+      assign ing_label = 'Pumpkin'
+      assign ing_w = 640
+      assign ing_h = 520
+    when 'tea-leaf'
+      assign ing_label = 'Tea leaf'
+      assign ing_w = 640
+      assign ing_h = 487
+  endcase
+  assign ing_alt = ing_label
+  if decorative or with_label
+    assign ing_alt = ''
+  endif
+  assign ing_loading = 'lazy'
+  if eager
+    assign ing_loading = 'eager'
+  endif
+-%}
+{%- if label_only -%}
+  {{- ing_label -}}
+{%- elsif ing_label != blank -%}
+  <img
+    src="{{ 'ingredient-' | append: key | append: '.webp' | asset_url }}"
+    alt="{{ ing_alt | escape }}"
+    width="{{ ing_w }}"
+    height="{{ ing_h }}"
+    loading="{{ ing_loading }}"
+    decoding="async"
+    class="ingredient-img {{ img_class }}"
+    {% if decorative %}aria-hidden="true"{% endif %}
+  >
+  {%- if with_label -%}
+    <span class="ingredient-label">{{ ing_label }}</span>
+  {%- endif -%}
+{%- endif -%}

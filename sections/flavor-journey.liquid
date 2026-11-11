@@ -18,6 +18,11 @@
   assign lon = current_data[5]
   assign notes = current_data[6]
 
+  capture ing_keys
+    render 'ingredient-list', handle: product.handle, product: product
+  endcapture
+  assign ing_keys = ing_keys | strip | split: ','
+
   assign route = section.settings.route | remove: ' ' | split: ','
   assign current_index = -1
   for h in route
@@ -70,6 +75,14 @@
   >
     <div class="flavor-journey__inner">
       <figure class="flavor-journey__map">
+        {%- if ing_keys.size > 1 and section.settings.show_floating -%}
+          <span class="flavor-journey__float flavor-journey__float--a" aria-hidden="true">
+            {%- render 'ingredient-img', key: ing_keys[0], decorative: true -%}
+          </span>
+          <span class="flavor-journey__float flavor-journey__float--b" aria-hidden="true">
+            {%- render 'ingredient-img', key: ing_keys[1], decorative: true -%}
+          </span>
+        {%- endif -%}
         <div class="flavor-journey__canvas">
         <svg
           class="flavor-journey__svg"
@@ -152,7 +165,18 @@
           <div class="flavor-journey__text rte">{{ text }}</div>
         {%- endif -%}
 
-        {%- if notes != blank and section.settings.notes_label != blank -%}
+        {%- if ing_keys.size > 0 and section.settings.notes_label != blank -%}
+          <div class="flavor-journey__notes">
+            <p class="flavor-journey__notes-label">{{ section.settings.notes_label }}</p>
+            <ul class="flavor-journey__ingredients">
+              {%- for key in ing_keys -%}
+                <li class="flavor-journey__ingredient" style="--i: {{ forloop.index0 }};">
+                  {%- render 'ingredient-img', key: key, img_class: 'flavor-journey__ingredient-img', with_label: true -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- elsif notes != blank and section.settings.notes_label != blank -%}
           <div class="flavor-journey__notes">
             <p class="flavor-journey__notes-label">{{ section.settings.notes_label }}</p>
             <ul class="flavor-journey__chips">
@@ -223,6 +247,12 @@
       "id": "notes_label",
       "label": "Flavor notes label",
       "default": "Flavor notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_floating",
+      "label": "Float ingredient illustrations around the map",
+      "default": true
     },
     {
       "type": "text",

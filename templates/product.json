@@ -208,7 +208,8 @@
                 "padding-block-start": 8,
                 "padding-block-end": 8,
                 "padding-inline-start": 6,
-                "padding-inline-end": 0
+                "padding-inline-end": 0,
+                "ingredient_count": 4
               },
               "blocks": {}
             }

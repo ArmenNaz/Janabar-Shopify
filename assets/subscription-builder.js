@@ -218,9 +218,30 @@
       this.paintBox();
     }
 
+    paintOrbit(f) {
+      const root = this.closest('.sub-box') || document;
+      const items = root.querySelectorAll('[data-box-orbit] img');
+      const urls = (f && f.ingredients) || [];
+      items.forEach((img, i) => {
+        const url = urls[i];
+        if (!url) {
+          img.hidden = true;
+          img.removeAttribute('src');
+          return;
+        }
+        if (img.getAttribute('src') === url && !img.hidden) return;
+        img.classList.remove('is-in');
+        img.onload = () => requestAnimationFrame(() => img.classList.add('is-in'));
+        img.src = url;
+        img.hidden = false;
+        if (img.complete) requestAnimationFrame(() => img.classList.add('is-in'));
+      });
+    }
+
     paintBox() {
       if (!this.featured) return;
       const f = this.featured;
+      this.paintOrbit(f);
       const root = this.closest('.sub-box') || document;
       const photo = root.querySelector('[data-box-photo]');
       if (photo) {

@@ -604,7 +604,8 @@
                     "padding-block-start": 8,
                     "padding-block-end": 4,
                     "padding-inline-start": 4,
-                    "padding-inline-end": 0
+                    "padding-inline-end": 0,
+                    "ingredient_count": 3
                   },
                   "blocks": {}
                 },
@@ -928,6 +929,21 @@
         "padding-block-start": 88,
         "padding-block-end": 88
       }
+    },
+    "ingredient_pantry": {
+      "type": "ingredient-pantry",
+      "settings": {
+        "heading": "The pantry",
+        "text": "<p>Every flavor starts with a handful of ingredients from its destination. Pick a bar to see what inspired it.</p>",
+        "flavors": "thai-chili-lime,assam-chai-spice,armenian-pumpkin",
+        "tabs_label": "Show ingredients for",
+        "all_label": "All flavors",
+        "shop_label": "Shop [flavor]",
+        "note": "Illustrations show the flavors that inspire each bar. See each product for full ingredients and allergens.",
+        "color_scheme": "scheme-3",
+        "padding-block-start": 80,
+        "padding-block-end": 80
+      }
     }
   },
   "order": [
@@ -935,6 +951,7 @@
     "marquee_destinations",
     "product_list_X8Q7bi",
     "our_story",
+    "ingredient_pantry",
     "flavor_route",
     "passport_page"
   ]
