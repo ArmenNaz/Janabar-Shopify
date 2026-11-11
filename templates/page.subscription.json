@@ -3,94 +3,79 @@
     "main": {
       "type": "subscription-box",
       "blocks": {
-        "perk_1": {
-          "type": "perk",
-          "settings": {
-            "text": "8 bars from across the route in every box"
-          }
-        },
-        "perk_2": {
-          "type": "perk",
-          "settings": {
-            "text": "Delivered on the schedule you choose"
-          }
-        },
-        "perk_3": {
-          "type": "perk",
-          "settings": {
-            "text": "Pause, skip or cancel anytime"
-          }
-        },
         "step_1": {
           "type": "step",
           "settings": {
-            "title": "Pick your pace",
-            "text": "Choose how often your box arrives."
+            "title": "Choose your plan",
+            "text": "Several single-flavor boxes every month, or one box a month that rotates."
           }
         },
         "step_2": {
           "type": "step",
           "settings": {
-            "title": "We pack the route",
-            "text": "Eight bars, mixed across our destinations, packed and shipped to your door."
+            "title": "Pick your flavors",
+            "text": "Choose how many boxes of each flavor, or the flavors and order for your rotation."
           }
         },
         "step_3": {
           "type": "step",
           "settings": {
-            "title": "Collect the stamps",
-            "text": "Taste your way around the world, one box at a time."
+            "title": "We ship monthly",
+            "text": "Eight bars per box, packed and shipped to your door every month."
           }
         },
         "faq_1": {
           "type": "faq",
           "settings": {
             "question": "What's in each box?",
-            "answer": "<p>Eight Janabar bars, mixed across our current flavors. As new destinations launch, they join the rotation.</p>"
+            "answer": "<p>Eight bars of one Janabar flavor.</p>"
           }
         },
         "faq_2": {
           "type": "faq",
           "settings": {
-            "question": "How often will it arrive?",
-            "answer": "<p>You choose the delivery schedule when you subscribe.</p>"
+            "question": "How does the rotating box work?",
+            "answer": "<p>You pick the flavors you want and the order. Each month we send one box of the next flavor in your rotation, then start again from the top.</p>"
           }
         },
         "faq_3": {
           "type": "faq",
           "settings": {
-            "question": "Can I skip or cancel?",
-            "answer": "<p>Yes. Skip a delivery, pause or cancel any time from your account.</p>"
+            "question": "Can I get more than one box a month?",
+            "answer": "<p>Yes. Choose “Pick your boxes” and add as many boxes of each flavor as you like. They all ship together each month.</p>"
           }
         },
         "faq_4": {
           "type": "faq",
           "settings": {
-            "question": "When will I be charged?",
-            "answer": "<p>You're charged when you subscribe, then again before each delivery on your schedule.</p>"
+            "question": "Can I change my flavors later?",
+            "answer": "<p>Yes. Get in touch through our Contact page and we'll update your boxes or your rotation.</p>"
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I skip or cancel?",
+            "answer": "<p>Yes. Skip a delivery, pause or cancel any time from your account.</p>"
           }
         }
       },
       "block_order": [
-        "perk_1",
-        "perk_2",
-        "perk_3",
         "step_1",
         "step_2",
         "step_3",
         "faq_1",
         "faq_2",
         "faq_3",
-        "faq_4"
+        "faq_4",
+        "faq_5"
       ],
       "settings": {
         "product": "the-passport-box",
         "box_label": "Janabar Passport Box",
         "bar_count": 8,
         "heading": "The Passport Box",
-        "text": "<p>Eight Janabar bars from across the route, delivered to your door on your schedule. A new mix of destinations in every box.</p>",
-        "price_note": "per box · [count] bars · [per_bar] a bar",
-        "button_label": "Subscribe",
+        "text": "<p>Eight bars of one flavor in every box, delivered monthly. Get a few flavors every month, or one box that rotates through your favorites.</p>",
         "waitlist_heading": "Launching soon. Be first in line.",
         "waitlist_placeholder": "Email address",
         "waitlist_button": "Join the waitlist",
@@ -100,7 +85,9 @@
         "faq_heading": "Questions",
         "color_scheme": "scheme-3",
         "padding-block-start": 56,
-        "padding-block-end": 88
+        "padding-block-end": 88,
+        "button_label": "Subscribe",
+        "rotating_name": "Rotating"
       }
     }
   },

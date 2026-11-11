@@ -1,23 +1,51 @@
 {%- comment -%}
-  Passport Box subscription landing section.
-  - Pick the subscription product in "Box product". While it isn't available
-    for sale (draft, unpublished, or no subscription app yet), the button is
-    replaced by a waitlist email sign-up tagged with "Waitlist tag".
-  - Blocks: perk (bullet beside the offer), step (how it works), faq.
+  Passport Box subscription page with a plan builder.
+
+  Box product setup: one option ("Flavor") with a variant per single-flavor
+  box, plus a variant named by "Rotating variant name" (default "Rotating").
+  Each variant's title should match a bar product's title so it picks up that
+  bar's stamp color and destination (snippets/flavor-data.liquid).
+
+  Plans:
+  - Pick your boxes: any number of single-flavor boxes each month.
+  - Rotating box: one box a month; customer picks the flavors and order.
+    The rotation is saved on the order as line item properties.
+
+  Checkout needs the box to be available and to have a subscription
+  (selling) plan from a subscriptions app. Until then the builder still
+  works as a preview and the button becomes a waitlist sign-up.
 {%- endcomment -%}
 
 {%- liquid
   assign box = section.settings.product
-  assign box_live = false
-  if box != blank and box.available
-    assign box_live = true
+  assign plan = blank
+  if box != blank
+    assign plan = box.selling_plan_groups.first.selling_plans.first
   endif
-  assign bar_count = section.settings.bar_count | default: 8
-  assign route = section.settings.route | remove: ' ' | split: ','
 
-  assign perks = section.blocks | where: 'type', 'perk'
+  assign can_checkout = false
+  if box != blank and box.available and plan != blank
+    assign can_checkout = true
+  endif
+
+  assign rotating_name = section.settings.rotating_name | default: 'Rotating' | downcase
+  assign rotating_variant = blank
+  assign flavor_count = 0
+  if box != blank
+    for v in box.variants
+      assign vt = v.title | downcase
+      if vt == rotating_name
+        assign rotating_variant = v
+      else
+        assign flavor_count = flavor_count | plus: 1
+      endif
+    endfor
+  endif
+
+  assign bar_count = section.settings.bar_count | default: 8
   assign steps = section.blocks | where: 'type', 'step'
   assign faqs = section.blocks | where: 'type', 'faq'
+  assign perks = section.blocks | where: 'type', 'perk'
 -%}
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
@@ -35,24 +63,16 @@
             | image_tag: loading: 'eager', sizes: '(min-width: 990px) 50vw, 100vw', class: 'sub-box__image'
           }}
         {%- else -%}
-          <div class="sub-box__box" aria-hidden="true">
+          <div class="sub-box__box" aria-hidden="true" data-box-visual>
             <div class="sub-box__lid">
               <span>{{ section.settings.box_label }}</span>
-              <span>{{ bar_count }} bars</span>
+              <span data-box-caption>{{ bar_count }} bars</span>
             </div>
             <div class="sub-box__slots">
               {%- for i in (1..bar_count) -%}
-                {%- liquid
-                  assign idx = forloop.index0 | modulo: route.size
-                  assign slot_handle = route[idx]
-                  capture slot_data
-                    render 'flavor-data', handle: slot_handle, product: all_products[slot_handle]
-                  endcapture
-                  assign slot_data = slot_data | strip | split: '|'
-                -%}
-                <div class="sub-box__bar" style="--bar-color: {{ slot_data[3] | default: '#a42325' }};">
-                  <span class="sub-box__bar-place">{{ slot_data[0] }}</span>
-                  <span class="sub-box__bar-code">{{ slot_data[2] }}</span>
+                <div class="sub-box__bar" data-box-bar>
+                  <span class="sub-box__bar-place" data-box-place></span>
+                  <span class="sub-box__bar-code" data-box-code></span>
                 </div>
               {%- endfor -%}
             </div>
@@ -68,16 +88,131 @@
           <div class="sub-box__text rte">{{ section.settings.text }}</div>
         {%- endif -%}
 
-        {%- if box != blank -%}
-          {%- liquid
-            assign per_bar = box.price | divided_by: bar_count | money
-            assign count_text = bar_count | append: ''
-            assign price_note = section.settings.price_note | replace: '[count]', count_text | replace: '[per_bar]', per_bar
-          -%}
-          <p class="sub-box__price">
-            <span class="sub-box__price-main">{{ box.price | money }}</span>
-            <span class="sub-box__price-note">{{ price_note }}</span>
-          </p>
+        {%- if box != blank and flavor_count > 0 -%}
+          {%- capture builder_data -%}
+            {
+              "sellingPlan": {% if plan != blank %}{{ plan.id }}{% else %}null{% endif %},
+              "canCheckout": {{ can_checkout }},
+              "cartUrl": {{ routes.cart_url | json }},
+              "cartAddUrl": {{ routes.cart_add_url | append: '.js' | json }},
+              "moneyFormat": {{ shop.money_format | json }},
+              "barCount": {{ bar_count }},
+              "maxPerFlavor": {{ section.settings.max_per_flavor }},
+              "rotating": {% if rotating_variant != blank %}{
+                "id": {{ rotating_variant.id }},
+                "available": {{ rotating_variant.available }},
+                "price": {%- liquid
+                  assign rp = rotating_variant.price
+                  if plan != blank
+                    for a in rotating_variant.selling_plan_allocations
+                      if a.selling_plan.id == plan.id
+                        assign rp = a.price
+                      endif
+                    endfor
+                  endif
+                  echo rp
+                -%}
+              }{% else %}null{% endif %},
+              "flavors": [
+                {%- assign first_written = false -%}
+                {%- for v in box.variants -%}
+                  {%- assign vt = v.title | downcase -%}
+                  {%- if vt == rotating_name -%}{%- continue -%}{%- endif -%}
+                  {%- liquid
+                    assign vh = v.title | handleize
+                    capture vdata
+                      render 'flavor-data', handle: vh, product: all_products[vh]
+                    endcapture
+                    assign vdata = vdata | strip | split: '|'
+                    assign vp = v.price
+                    if plan != blank
+                      for a in v.selling_plan_allocations
+                        if a.selling_plan.id == plan.id
+                          assign vp = a.price
+                        endif
+                      endfor
+                    endif
+                  -%}
+                  {%- if first_written -%},{%- endif -%}
+                  {
+                    "id": {{ v.id }},
+                    "title": {{ v.title | json }},
+                    "available": {{ v.available }},
+                    "price": {{ vp }},
+                    "place": {{ vdata[0] | default: v.title | json }},
+                    "country": {{ vdata[1] | json }},
+                    "code": {{ vdata[2] | json }},
+                    "color": {{ vdata[3] | default: '#a42325' | json }}
+                  }
+                  {%- assign first_written = true -%}
+                {%- endfor -%}
+              ]
+            }
+          {%- endcapture -%}
+
+          <sub-box-builder class="sub-box__builder" data-section-id="{{ section.id }}">
+            <script type="application/json" data-builder-data>{{ builder_data | strip_newlines }}</script>
+            <script type="application/json" data-builder-strings>
+              {
+                "plan_multi": {{ section.settings.multi_label | json }},
+                "plan_rotate": {{ section.settings.rotate_label | json }},
+                "boxes_one": {{ section.settings.summary_box_one | json }},
+                "boxes_other": {{ section.settings.summary_box_other | json }},
+                "per_month": {{ section.settings.summary_per_month | json }},
+                "empty_multi": {{ section.settings.empty_multi | json }},
+                "empty_rotate": {{ section.settings.empty_rotate | json }},
+                "month": {{ section.settings.month_label | json }},
+                "error": {{ section.settings.error_message | json }},
+                "adding": {{ section.settings.adding_label | json }}
+              }
+            </script>
+
+            <fieldset class="sub-box__plans">
+              <legend class="sub-box__step-label">{{ section.settings.plan_step_label }}</legend>
+              <label class="sub-box__plan">
+                <input type="radio" name="plan-{{ section.id }}" value="multi" checked>
+                <span class="sub-box__plan-card">
+                  <span class="sub-box__plan-title">{{ section.settings.multi_label }}</span>
+                  <span class="sub-box__plan-text">{{ section.settings.multi_text }}</span>
+                </span>
+              </label>
+              {%- if rotating_variant != blank -%}
+                <label class="sub-box__plan">
+                  <input type="radio" name="plan-{{ section.id }}" value="rotate">
+                  <span class="sub-box__plan-card">
+                    <span class="sub-box__plan-title">{{ section.settings.rotate_label }}</span>
+                    <span class="sub-box__plan-text">{{ section.settings.rotate_text }}</span>
+                  </span>
+                </label>
+              {%- endif -%}
+            </fieldset>
+
+            <div class="sub-box__panel" data-panel="multi">
+              <p class="sub-box__step-label">{{ section.settings.multi_step_label }}</p>
+              <ul class="sub-box__flavors" data-multi-list></ul>
+            </div>
+
+            <div class="sub-box__panel" data-panel="rotate" hidden>
+              <p class="sub-box__step-label">{{ section.settings.rotate_step_label }}</p>
+              <div class="sub-box__chips" data-rotate-chips></div>
+              <ol class="sub-box__schedule" data-rotate-schedule></ol>
+            </div>
+
+            <div class="sub-box__summary" aria-live="polite">
+              <span class="sub-box__summary-boxes" data-summary-boxes></span>
+              <span class="sub-box__summary-price" data-summary-price></span>
+            </div>
+
+            {%- if can_checkout -%}
+              <button type="button" class="button sub-box__cta" data-builder-submit disabled>
+                {{ section.settings.button_label }}
+              </button>
+              <p class="sub-box__error" data-builder-error role="alert" hidden></p>
+              {%- if section.settings.billing_note != blank -%}
+                <p class="sub-box__note">{{ section.settings.billing_note }}</p>
+              {%- endif -%}
+            {%- endif -%}
+          </sub-box-builder>
         {%- endif -%}
 
         {%- if perks.size > 0 -%}
@@ -88,9 +223,7 @@
           </ul>
         {%- endif -%}
 
-        {%- if box_live -%}
-          <a class="button sub-box__cta" href="{{ box.url }}">{{ section.settings.button_label }}</a>
-        {%- else -%}
+        {%- unless can_checkout -%}
           <div class="sub-box__waitlist">
             {%- if section.settings.waitlist_heading != blank -%}
               <p class="sub-box__waitlist-heading">{{ section.settings.waitlist_heading }}</p>
@@ -119,7 +252,7 @@
               {%- endif -%}
             {%- endform -%}
           </div>
-        {%- endif -%}
+        {%- endunless -%}
       </div>
     </div>
 
@@ -155,20 +288,39 @@
   </div>
 </div>
 
+<script src="{{ 'subscription-builder.js' | asset_url }}" defer></script>
+
 {% schema %}
 {
   "name": "Subscription box",
   "settings": [
     { "type": "product", "id": "product", "label": "Box product" },
-    { "type": "image_picker", "id": "image", "label": "Image", "info": "Leave empty to show the illustrated box of bars." },
+    { "type": "text", "id": "rotating_name", "label": "Rotating variant name", "default": "Rotating", "info": "The box variant used for the rotating plan. All other variants are single-flavor boxes." },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Leave empty to show the illustrated box, which updates as customers choose flavors." },
     { "type": "text", "id": "box_label", "label": "Box lid label", "default": "Janabar Passport Box" },
     { "type": "range", "id": "bar_count", "label": "Bars per box", "min": 2, "max": 12, "step": 1, "default": 8 },
-    { "type": "text", "id": "route", "label": "Flavors shown in the box", "info": "Product handles, comma-separated.", "default": "armenian-pumpkin,thai-chili-lime,assam-chai-spice,mediterranean-spice,pueblo-mole,valencia-chocolate-orange" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "The Passport Box" },
-    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Eight Janabar bars from across the route, delivered to your door on your schedule. A new mix of destinations in every box.</p>" },
-    { "type": "text", "id": "price_note", "label": "Price note", "info": "[count] = bars per box, [per_bar] = price per bar.", "default": "per box · [count] bars · [per_bar] a bar" },
-    { "type": "text", "id": "button_label", "label": "Button label", "default": "Subscribe" },
-    { "type": "header", "content": "Waitlist (shown until the box is for sale)" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Eight bars of one flavor in every box, delivered monthly.</p>" },
+    { "type": "header", "content": "Plan builder" },
+    { "type": "text", "id": "plan_step_label", "label": "Plan step label", "default": "1. Choose your plan" },
+    { "type": "text", "id": "multi_label", "label": "Multi-box plan name", "default": "Pick your boxes" },
+    { "type": "text", "id": "multi_text", "label": "Multi-box plan description", "default": "One or more boxes a month. Choose the flavor of each." },
+    { "type": "text", "id": "rotate_label", "label": "Rotating plan name", "default": "Rotating box" },
+    { "type": "text", "id": "rotate_text", "label": "Rotating plan description", "default": "One box a month, rotating through the flavors you pick." },
+    { "type": "text", "id": "multi_step_label", "label": "Multi-box flavor step label", "default": "2. How many boxes of each flavor?" },
+    { "type": "text", "id": "rotate_step_label", "label": "Rotating flavor step label", "default": "2. Pick your flavors in the order you want them" },
+    { "type": "range", "id": "max_per_flavor", "label": "Max boxes per flavor", "min": 1, "max": 10, "step": 1, "default": 4 },
+    { "type": "text", "id": "month_label", "label": "Month label", "default": "Month [n]", "info": "[n] = month number." },
+    { "type": "text", "id": "summary_box_one", "label": "Summary (one box)", "default": "1 box a month" },
+    { "type": "text", "id": "summary_box_other", "label": "Summary (several boxes)", "default": "[count] boxes a month" },
+    { "type": "text", "id": "summary_per_month", "label": "Price summary", "default": "[price] / month" },
+    { "type": "text", "id": "empty_multi", "label": "Hint when no boxes chosen", "default": "Add at least one box." },
+    { "type": "text", "id": "empty_rotate", "label": "Hint when no flavors chosen", "default": "Pick at least one flavor." },
+    { "type": "text", "id": "button_label", "label": "Subscribe button label", "default": "Subscribe" },
+    { "type": "text", "id": "adding_label", "label": "Button label while adding", "default": "Adding…" },
+    { "type": "text", "id": "error_message", "label": "Error message", "default": "Something went wrong adding your box. Please try again." },
+    { "type": "text", "id": "billing_note", "label": "Note under button", "default": "Billed monthly. Pause, skip or cancel anytime." },
+    { "type": "header", "content": "Waitlist (shown until the box can be bought as a subscription)" },
     { "type": "text", "id": "waitlist_heading", "label": "Waitlist heading", "default": "Launching soon. Be first in line." },
     { "type": "text", "id": "waitlist_placeholder", "label": "Email placeholder", "default": "Email address" },
     { "type": "text", "id": "waitlist_button", "label": "Waitlist button", "default": "Join the waitlist" },
@@ -185,14 +337,14 @@
     {
       "type": "perk",
       "name": "Perk",
-      "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "8 bars from across the route" }]
+      "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "Free shipping" }]
     },
     {
       "type": "step",
       "name": "Step",
       "settings": [
-        { "type": "text", "id": "title", "label": "Title", "default": "Pick your pace" },
-        { "type": "textarea", "id": "text", "label": "Text", "default": "Choose how often your box arrives." }
+        { "type": "text", "id": "title", "label": "Title", "default": "Choose your plan" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Several boxes a month, or one box that rotates." }
       ]
     },
     {
