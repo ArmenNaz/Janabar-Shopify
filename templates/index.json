@@ -921,7 +921,7 @@
         "image": "shopify://shop_images/Janabar_Homescreen_1.png",
         "caption": "",
         "image_position": "left",
-        "label": "Our story",
+        "label": "Our journey",
         "heading": "Every bar starts with a journey",
         "button_label": "Explore the flavors",
         "button_link": "shopify://collections/all",
@@ -950,9 +950,9 @@
     "hero_RkimKJ",
     "marquee_destinations",
     "product_list_X8Q7bi",
-    "our_story",
     "ingredient_pantry",
     "flavor_route",
-    "passport_page"
+    "passport_page",
+    "our_story"
   ]
 }
