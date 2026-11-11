@@ -219,8 +219,27 @@
     }
 
     paintBox() {
-      if (!this.visual || !this.featured) return;
+      if (!this.featured) return;
       const f = this.featured;
+      const root = this.closest('.sub-box') || document;
+      const photo = root.querySelector('[data-box-photo]');
+      if (photo) {
+        if (f.image) {
+          if (photo.getAttribute('src') !== f.image) {
+            photo.classList.remove('is-shown');
+            photo.onload = () => photo.classList.add('is-shown');
+            photo.src = f.image;
+            if (photo.complete) photo.classList.add('is-shown');
+          }
+          photo.alt = f.imageAlt || f.title;
+          photo.hidden = false;
+          if (this.visual) this.visual.hidden = true;
+          return;
+        }
+        photo.hidden = true;
+      }
+      if (!this.visual) return;
+      this.visual.hidden = false;
       this.visual.querySelectorAll('[data-box-bar]').forEach((bar) => {
         bar.style.setProperty('--bar-color', f.color);
         const place = bar.querySelector('[data-box-place]');

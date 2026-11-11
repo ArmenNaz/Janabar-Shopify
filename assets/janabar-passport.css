@@ -1235,3 +1235,26 @@
   .sub-box__lid span:last-child {
     text-align: right;
   }
+  .sub-box__photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    filter: drop-shadow(0 24px 30px rgb(40 20 10 / 0.28));
+  }
+
+  .sub-box__photo.is-shown {
+    opacity: 1;
+    transform: none;
+  }
+
+  .sub-box__photo[hidden],
+  .sub-box__box[hidden] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sub-box__photo { transition: none; transform: none; }
+  }

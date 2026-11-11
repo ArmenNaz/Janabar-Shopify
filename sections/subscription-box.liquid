@@ -63,6 +63,7 @@
             | image_tag: loading: 'eager', sizes: '(min-width: 990px) 50vw, 100vw', class: 'sub-box__image'
           }}
         {%- else -%}
+          <img class="sub-box__photo" data-box-photo alt="" hidden width="1294" height="1216">
           <div class="sub-box__box" aria-hidden="true" data-box-visual>
             <div class="sub-box__lid">
               <span>{{ section.settings.box_label }}</span>
@@ -142,7 +143,9 @@
                     "place": {{ vdata[0] | default: v.title | json }},
                     "country": {{ vdata[1] | json }},
                     "code": {{ vdata[2] | json }},
-                    "color": {{ vdata[3] | default: '#a42325' | json }}
+                    "color": {{ vdata[3] | default: '#a42325' | json }},
+                    "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1400 | json }}{% else %}null{% endif %},
+                    "imageAlt": {{ v.featured_media.alt | default: v.title | json }}
                   }
                   {%- assign first_written = true -%}
                 {%- endfor -%}
