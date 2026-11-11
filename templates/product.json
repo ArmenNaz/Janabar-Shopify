@@ -25,7 +25,7 @@
             "slideshow_mobile_controls_style": "dots",
             "thumbnail_position": "bottom",
             "thumbnail_width": 44,
-            "aspect_ratio": "1",
+            "aspect_ratio": "4/3",
             "constrain_to_viewport": false,
             "media_fit": "cover",
             "media_radius": 0,
@@ -261,7 +261,7 @@
               "type": "_product-card-gallery",
               "name": "t:names.product_card_media",
               "settings": {
-                "image_ratio": "square",
+                "image_ratio": "classic",
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
