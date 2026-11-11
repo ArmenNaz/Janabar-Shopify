@@ -1258,3 +1258,114 @@
   @media (prefers-reduced-motion: reduce) {
     .sub-box__photo { transition: none; transform: none; }
   }
+/* from sections/our-story.liquid */
+  .our-story__inner {
+    display: grid;
+    gap: 40px;
+    align-items: center;
+    padding-block: var(--os-pad-top) var(--os-pad-bottom);
+  }
+
+  @media screen and (min-width: 990px) {
+    .our-story__inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+
+    .our-story--image-right .our-story__media {
+      order: 2;
+    }
+  }
+
+  .our-story__media {
+    margin: 0;
+  }
+
+  .our-story__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  @media screen and (max-width: 749px) {
+    .our-story__image {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  .our-story__placeholder {
+    background: rgb(127 127 127 / 0.15);
+    fill: currentColor;
+    opacity: 0.5;
+  }
+
+  .our-story__caption {
+    margin: 10px 0 0;
+    font-size: 0.8rem;
+    opacity: 0.65;
+  }
+
+  .our-story__label {
+    font-family: var(--font-accent--family);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.8rem;
+    margin: 0 0 12px;
+    opacity: 0.75;
+  }
+
+  .our-story__heading {
+    margin: 0 0 24px;
+    max-width: 14ch;
+  }
+
+  .our-story__text {
+    max-width: 52ch;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+
+  .our-story__text p {
+    margin: 0;
+  }
+
+  .our-story__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 20px;
+    margin: 32px 0 36px;
+    padding-top: 24px;
+    border-top: 1px solid rgb(var(--color-foreground-rgb, 255 255 255) / 0.25);
+  }
+
+  @media screen and (max-width: 749px) {
+    .our-story__stats {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .our-story__stat dt {
+      font-size: 0.75rem;
+    }
+  }
+
+  .our-story__stat {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .our-story__stat dd {
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1;
+  }
+
+  .our-story__stat dt {
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }

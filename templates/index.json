@@ -864,12 +864,77 @@
         "padding-block-start": 88,
         "padding-block-end": 88
       }
+    },
+    "our_story": {
+      "type": "our-story",
+      "blocks": {
+        "paragraph_1": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>Janabar started with a simple idea: the best flavors are the ones you find along the way. Every bar is built around a place, from the street stalls of Bangkok to the tea gardens of Assam and the autumn harvest of Armenia.</p>"
+          }
+        },
+        "paragraph_2": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>Each one packs 16 grams of protein, so it's as ready for a mountain trail as it is for a long day at your desk.</p>"
+          }
+        },
+        "paragraph_3": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>Our roots are Armenian, and so is the view on every wrapper. But the route keeps growing: every new flavor is another stop, and we're only getting started.</p>"
+          }
+        },
+        "stat_1": {
+          "type": "stat",
+          "settings": {
+            "value": "16g",
+            "label": "Protein in every bar"
+          }
+        },
+        "stat_2": {
+          "type": "stat",
+          "settings": {
+            "value": "6",
+            "label": "Destinations on the route"
+          }
+        },
+        "stat_3": {
+          "type": "stat",
+          "settings": {
+            "value": "8",
+            "label": "Bars in every box"
+          }
+        }
+      },
+      "block_order": [
+        "paragraph_1",
+        "paragraph_2",
+        "paragraph_3",
+        "stat_1",
+        "stat_2",
+        "stat_3"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/Janabar_Homescreen_1.png",
+        "caption": "",
+        "image_position": "left",
+        "label": "Our story",
+        "heading": "Every bar starts with a journey",
+        "button_label": "Explore the flavors",
+        "button_link": "shopify://collections/all",
+        "color_scheme": "scheme-5",
+        "padding-block-start": 88,
+        "padding-block-end": 88
+      }
     }
   },
   "order": [
     "hero_RkimKJ",
     "marquee_destinations",
     "product_list_X8Q7bi",
+    "our_story",
     "flavor_route",
     "passport_page"
   ]
