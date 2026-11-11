@@ -227,7 +227,8 @@
         "size": 96,
         "band_height": 44,
         "color_scheme": "scheme-2"
-      }
+      },
+      "name": "Ingredient garnish"
     }
   },
   "order": [
