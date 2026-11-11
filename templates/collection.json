@@ -14,7 +14,7 @@
       "blocks": {
         "text_tqQTNE": {
           "type": "text",
-          "name": "Title",
+          "name": "Banner title",
           "settings": {
             "text": "<h1>{{ closest.collection.title }}</h1>",
             "width": "100%",
