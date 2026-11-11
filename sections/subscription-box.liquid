@@ -1,0 +1,209 @@
+{%- comment -%}
+  Passport Box subscription landing section.
+  - Pick the subscription product in "Box product". While it isn't available
+    for sale (draft, unpublished, or no subscription app yet), the button is
+    replaced by a waitlist email sign-up tagged with "Waitlist tag".
+  - Blocks: perk (bullet beside the offer), step (how it works), faq.
+{%- endcomment -%}
+
+{%- liquid
+  assign box = section.settings.product
+  assign box_live = false
+  if box != blank and box.available
+    assign box_live = true
+  endif
+  assign bar_count = section.settings.bar_count | default: 8
+  assign route = section.settings.route | remove: ' ' | split: ','
+
+  assign perks = section.blocks | where: 'type', 'perk'
+  assign steps = section.blocks | where: 'type', 'step'
+  assign faqs = section.blocks | where: 'type', 'faq'
+-%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--page-width color-{{ section.settings.color_scheme }} sub-box"
+  style="--sb-pad-top: {{ section.settings.padding-block-start }}px; --sb-pad-bottom: {{ section.settings.padding-block-end }}px;"
+>
+  <div class="sub-box__inner">
+    <div class="sub-box__offer">
+      <div class="sub-box__visual">
+        {%- if section.settings.image != blank -%}
+          {{
+            section.settings.image
+            | image_url: width: 1200
+            | image_tag: loading: 'eager', sizes: '(min-width: 990px) 50vw, 100vw', class: 'sub-box__image'
+          }}
+        {%- else -%}
+          <div class="sub-box__box" aria-hidden="true">
+            <div class="sub-box__lid">
+              <span>{{ section.settings.box_label }}</span>
+              <span>{{ bar_count }} bars</span>
+            </div>
+            <div class="sub-box__slots">
+              {%- for i in (1..bar_count) -%}
+                {%- liquid
+                  assign idx = forloop.index0 | modulo: route.size
+                  assign slot_handle = route[idx]
+                  capture slot_data
+                    render 'flavor-data', handle: slot_handle, product: all_products[slot_handle]
+                  endcapture
+                  assign slot_data = slot_data | strip | split: '|'
+                -%}
+                <div class="sub-box__bar" style="--bar-color: {{ slot_data[3] | default: '#a42325' }};">
+                  <span class="sub-box__bar-place">{{ slot_data[0] }}</span>
+                  <span class="sub-box__bar-code">{{ slot_data[2] }}</span>
+                </div>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="sub-box__copy">
+        {%- if section.settings.heading != blank -%}
+          <h1 class="h1 sub-box__heading">{{ section.settings.heading }}</h1>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="sub-box__text rte">{{ section.settings.text }}</div>
+        {%- endif -%}
+
+        {%- if box != blank -%}
+          {%- liquid
+            assign per_bar = box.price | divided_by: bar_count | money
+            assign count_text = bar_count | append: ''
+            assign price_note = section.settings.price_note | replace: '[count]', count_text | replace: '[per_bar]', per_bar
+          -%}
+          <p class="sub-box__price">
+            <span class="sub-box__price-main">{{ box.price | money }}</span>
+            <span class="sub-box__price-note">{{ price_note }}</span>
+          </p>
+        {%- endif -%}
+
+        {%- if perks.size > 0 -%}
+          <ul class="sub-box__perks">
+            {%- for block in perks -%}
+              <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if box_live -%}
+          <a class="button sub-box__cta" href="{{ box.url }}">{{ section.settings.button_label }}</a>
+        {%- else -%}
+          <div class="sub-box__waitlist">
+            {%- if section.settings.waitlist_heading != blank -%}
+              <p class="sub-box__waitlist-heading">{{ section.settings.waitlist_heading }}</p>
+            {%- endif -%}
+            {%- form 'customer', id: 'SubBoxWaitlist', class: 'sub-box__form' -%}
+              <input type="hidden" name="contact[tags]" value="newsletter,{{ section.settings.waitlist_tag | escape }}">
+              {%- if form.posted_successfully? -%}
+                <p class="sub-box__form-success" role="status">{{ section.settings.waitlist_success }}</p>
+              {%- else -%}
+                <label class="visually-hidden" for="SubBoxEmail">Email</label>
+                <input
+                  id="SubBoxEmail"
+                  type="email"
+                  name="contact[email]"
+                  autocomplete="email"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  required
+                  placeholder="{{ section.settings.waitlist_placeholder | escape }}"
+                  class="sub-box__input"
+                >
+                <button type="submit" class="button sub-box__cta">{{ section.settings.waitlist_button }}</button>
+                {%- if form.errors -%}
+                  <p class="sub-box__form-error" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endform -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- if steps.size > 0 -%}
+      <div class="sub-box__how">
+        {%- if section.settings.steps_heading != blank -%}
+          <h2 class="h2 sub-box__subheading">{{ section.settings.steps_heading }}</h2>
+        {%- endif -%}
+        <ol class="sub-box__steps">
+          {%- for block in steps -%}
+            <li class="sub-box__step" {{ block.shopify_attributes }}>
+              <h3 class="sub-box__step-title">{{ block.settings.title }}</h3>
+              <p class="sub-box__step-text">{{ block.settings.text }}</p>
+            </li>
+          {%- endfor -%}
+        </ol>
+      </div>
+    {%- endif -%}
+
+    {%- if faqs.size > 0 -%}
+      <div class="sub-box__faq">
+        {%- if section.settings.faq_heading != blank -%}
+          <h2 class="h2 sub-box__subheading">{{ section.settings.faq_heading }}</h2>
+        {%- endif -%}
+        {%- for block in faqs -%}
+          <details class="sub-box__q" {{ block.shopify_attributes }}>
+            <summary>{{ block.settings.question }}</summary>
+            <div class="rte">{{ block.settings.answer }}</div>
+          </details>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Subscription box",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Box product" },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Leave empty to show the illustrated box of bars." },
+    { "type": "text", "id": "box_label", "label": "Box lid label", "default": "Janabar Passport Box" },
+    { "type": "range", "id": "bar_count", "label": "Bars per box", "min": 2, "max": 12, "step": 1, "default": 8 },
+    { "type": "text", "id": "route", "label": "Flavors shown in the box", "info": "Product handles, comma-separated.", "default": "armenian-pumpkin,thai-chili-lime,assam-chai-spice,mediterranean-spice,pueblo-mole,valencia-chocolate-orange" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The Passport Box" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Eight Janabar bars from across the route, delivered to your door on your schedule. A new mix of destinations in every box.</p>" },
+    { "type": "text", "id": "price_note", "label": "Price note", "info": "[count] = bars per box, [per_bar] = price per bar.", "default": "per box · [count] bars · [per_bar] a bar" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Subscribe" },
+    { "type": "header", "content": "Waitlist (shown until the box is for sale)" },
+    { "type": "text", "id": "waitlist_heading", "label": "Waitlist heading", "default": "Launching soon. Be first in line." },
+    { "type": "text", "id": "waitlist_placeholder", "label": "Email placeholder", "default": "Email address" },
+    { "type": "text", "id": "waitlist_button", "label": "Waitlist button", "default": "Join the waitlist" },
+    { "type": "text", "id": "waitlist_success", "label": "Success message", "default": "You're on the list. We'll email you when the first boxes ship." },
+    { "type": "text", "id": "waitlist_tag", "label": "Customer tag", "default": "passport-box-waitlist" },
+    { "type": "header", "content": "Sections" },
+    { "type": "text", "id": "steps_heading", "label": "How it works heading", "default": "How it works" },
+    { "type": "text", "id": "faq_heading", "label": "FAQ heading", "default": "Questions" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-3" },
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 88 }
+  ],
+  "blocks": [
+    {
+      "type": "perk",
+      "name": "Perk",
+      "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "8 bars from across the route" }]
+    },
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Pick your pace" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Choose how often your box arrives." }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Can I skip a delivery?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Yes. Skip, pause or cancel any time from your account.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Subscription box" }]
+}
+{% endschema %}

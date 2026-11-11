@@ -1,0 +1,110 @@
+{
+  "sections": {
+    "main": {
+      "type": "subscription-box",
+      "blocks": {
+        "perk_1": {
+          "type": "perk",
+          "settings": {
+            "text": "8 bars from across the route in every box"
+          }
+        },
+        "perk_2": {
+          "type": "perk",
+          "settings": {
+            "text": "Delivered on the schedule you choose"
+          }
+        },
+        "perk_3": {
+          "type": "perk",
+          "settings": {
+            "text": "Pause, skip or cancel anytime"
+          }
+        },
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "title": "Pick your pace",
+            "text": "Choose how often your box arrives."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "title": "We pack the route",
+            "text": "Eight bars, mixed across our destinations, packed and shipped to your door."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "Collect the stamps",
+            "text": "Taste your way around the world, one box at a time."
+          }
+        },
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "What's in each box?",
+            "answer": "<p>Eight Janabar bars, mixed across our current flavors. As new destinations launch, they join the rotation.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "How often will it arrive?",
+            "answer": "<p>You choose the delivery schedule when you subscribe.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I skip or cancel?",
+            "answer": "<p>Yes. Skip a delivery, pause or cancel any time from your account.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "When will I be charged?",
+            "answer": "<p>You're charged when you subscribe, then again before each delivery on your schedule.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "perk_1",
+        "perk_2",
+        "perk_3",
+        "step_1",
+        "step_2",
+        "step_3",
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4"
+      ],
+      "settings": {
+        "product": "the-passport-box",
+        "box_label": "Janabar Passport Box",
+        "bar_count": 8,
+        "heading": "The Passport Box",
+        "text": "<p>Eight Janabar bars from across the route, delivered to your door on your schedule. A new mix of destinations in every box.</p>",
+        "price_note": "per box · [count] bars · [per_bar] a bar",
+        "button_label": "Subscribe",
+        "waitlist_heading": "Launching soon. Be first in line.",
+        "waitlist_placeholder": "Email address",
+        "waitlist_button": "Join the waitlist",
+        "waitlist_success": "You're on the list. We'll email you when the first boxes ship.",
+        "waitlist_tag": "passport-box-waitlist",
+        "steps_heading": "How it works",
+        "faq_heading": "Questions",
+        "color_scheme": "scheme-3",
+        "padding-block-start": 56,
+        "padding-block-end": 88
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
