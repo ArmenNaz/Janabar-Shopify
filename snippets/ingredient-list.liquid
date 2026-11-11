@@ -20,9 +20,9 @@
     when 'thai-chili-lime'
       assign ing_keys = 'chili,lime,coconut,ginger,cilantro,peanuts'
     when 'assam-chai-spice', 'coconut-chai'
-      assign ing_keys = 'chai,coconut-half,cardamom,ginger,cloves,honey-jar,almonds'
+      assign ing_keys = 'chai,coconut-half,cardamom,ginger,cloves,honey-combo,almonds'
     when 'armenian-pumpkin', 'armenian-harvest'
-      assign ing_keys = 'pomegranate,pumpkin,honey,cinnamon-bundle,honeycomb'
+      assign ing_keys = 'pomegranate,pumpkin,honey,cinnamon-bundle'
   endcase
   if product.metafields.custom.ingredient_art != blank
     assign ing_keys = product.metafields.custom.ingredient_art.value | remove: ' '
