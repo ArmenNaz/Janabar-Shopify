@@ -452,7 +452,7 @@
 
 <div
   id="Hero-{{ section.id }}"
-  class="hero color-{{ section.settings.color_scheme }}{% if section.blocks.size == 0 and section.settings.section_height == 'auto' %} hero--no-blocks-auto-height{% endif %}{% if section.settings.stack_media_on_mobile %} hero--stack-mobile{% endif %}"
+  class="hero color-{{ section.settings.color_scheme }}{% if section.blocks.size == 0 and section.settings.section_height == 'auto' %} hero--no-blocks-auto-height{% endif %}{% if section.settings.stack_media_on_mobile %} hero--stack-mobile{% endif %}{% if section.settings.text_shade %} hero--text-shade{% endif %}{% if section.settings.split_on_mobile %} hero--split-mobile{% endif %}"
   style="
     --hero-border-style: {{ section.settings.border }};
     --hero-border-width: {{ section.settings.border_width }}px;
@@ -1195,6 +1195,20 @@
       ],
       "default": "to top",
       "visible_if": "{{ section.settings.toggle_overlay and section.settings.overlay_style == 'gradient' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_shade",
+      "label": "Shade behind text",
+      "info": "Darkens the image softly on the text side so text stays readable without dimming the rest of the image.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "split_on_mobile",
+      "label": "Show image above text on mobile",
+      "info": "On phones, shows the whole image first with the text in a band below it instead of on top.",
+      "default": false
     },
     {
       "type": "checkbox",
