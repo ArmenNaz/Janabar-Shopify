@@ -1288,11 +1288,6 @@
     object-fit: cover;
   }
 
-  @media screen and (max-width: 749px) {
-    .our-story__image {
-      aspect-ratio: 4 / 3;
-    }
-  }
 
   .our-story__placeholder {
     background: rgb(127 127 127 / 0.15);
