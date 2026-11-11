@@ -224,7 +224,7 @@
       "type": "ingredient-garnish",
       "settings": {
         "ingredients": "chili,cinnamon-sticks,coconut-half,cardamom,pomegranate,lime,ginger,honeycomb,cloves,pumpkin,tea-leaf,almonds",
-        "size": 96,
+        "size": 95,
         "band_height": 44,
         "color_scheme": "scheme-2"
       },
