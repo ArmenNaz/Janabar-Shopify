@@ -869,24 +869,6 @@
     "our_story": {
       "type": "our-story",
       "blocks": {
-        "paragraph_1": {
-          "type": "paragraph",
-          "settings": {
-            "text": "<p>Janabar started with a simple idea: the best flavors are the ones you find along the way. Every bar is built around a place, from the street stalls of Bangkok to the tea gardens of Assam and the autumn harvest of Armenia.</p>"
-          }
-        },
-        "paragraph_2": {
-          "type": "paragraph",
-          "settings": {
-            "text": "<p>Each one packs 16 grams of protein, so it's as ready for a mountain trail as it is for a long day at your desk.</p>"
-          }
-        },
-        "paragraph_3": {
-          "type": "paragraph",
-          "settings": {
-            "text": "<p>Our roots are Armenian, and so is the view on every wrapper. But the route keeps growing: every new flavor is another stop, and we're only getting started.</p>"
-          }
-        },
         "stat_1": {
           "type": "stat",
           "settings": {
@@ -907,12 +889,44 @@
             "value": "8",
             "label": "Bars in every box"
           }
+        },
+        "paragraph_1": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>Janabar started on the trail with a family of hikers looking for something better. We were tired of reaching into our packs only to find the same tired formula: protein bars disguised as chocolate-peanut butter candy textured like clay. None of them gave us the satisfaction of real food from our own kitchen, and none of them inspired the journey ahead.</p>"
+          }
+        },
+        "paragraph_2": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>We started Janabar to break that mold.</p>"
+          }
+        },
+        "paragraph_3": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>Following in the footsteps of our Armenian heritage as travelers and merchants along the Silk Road, we explore bold, vibrant ingredients from across the Middle East, India, East Asia, and beyond. We pair global food tradition with high-protein nutrition made to fuel wherever you’re headed—whether that’s up a steep mountain switchback or a busy morning commute.</p>"
+          }
+        },
+        "paragraph_4": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>Our first flavor takes you to the slopes of Mount Ararat, where our ancestors first set out. Now, we’re sharing that journey with you.</p>"
+          }
+        },
+        "paragraph_5": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>Pack your bag. We’re only getting started.</p>"
+          }
         }
       },
       "block_order": [
         "paragraph_1",
         "paragraph_2",
         "paragraph_3",
+        "paragraph_4",
+        "paragraph_5",
         "stat_1",
         "stat_2",
         "stat_3"
@@ -922,7 +936,7 @@
         "caption": "",
         "image_position": "left",
         "label": "Our journey",
-        "heading": "Every bar starts with a journey",
+        "heading": "Every flavor is a new stop.",
         "button_label": "Explore the flavors",
         "button_link": "shopify://collections/all",
         "color_scheme": "scheme-5",
