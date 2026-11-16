@@ -798,8 +798,8 @@
       ],
       "settings": {
         "eyebrow": "The route",
-        "heading": "Six stops. One bar at a time.",
-        "text": "<p>Every Janabar is a destination. Follow the route and collect a stamp at each stop.</p>",
+        "heading": "Six destinations. One bar at a time.",
+        "text": "<p>Every Janabar is a destination. Follow the route and collect a stamp at each destination.</p>",
         "color_scheme": "scheme-1",
         "padding-block-start": 72,
         "padding-block-end": 72
@@ -936,7 +936,7 @@
         "caption": "",
         "image_position": "left",
         "label": "Our journey",
-        "heading": "Every flavor is a new stop.",
+        "heading": "Every flavor is a new destination.",
         "button_label": "Explore the flavors",
         "button_link": "shopify://collections/all",
         "color_scheme": "scheme-5",
